@@ -21,7 +21,7 @@ blog data can't hurt nonetheless!
 
 
 1. Upload "lh-tools" to "/wp-content/plugins/".
-2. Download ARC from http:/arc.semsol.org/download
+2. Download ARC from https://github.com/semsol/arc2/
 3. Upload the ARC files to "/wp-content/plugins/lh-tools/arc" 
 4. Activate "LH Tools" through the "Plugins" menu in WordPress.
 5. Go to "Options" -> "LH Tools" in Wordpress and configure the plugin
@@ -30,3 +30,6 @@ blog data can't hurt nonetheless!
 
 **0.0.1 February 01, 2012**  
 Initial release.
+
+**0.0.2 February 04, 2012**  
+Automatically install Arc

@@ -3,7 +3,7 @@
 Plugin Name: LH Tools
 Plugin URI: http://localhero.biz/plugins/lh-tools/
 Description: RDF Storage and related tools. Requires the <a href="https://github.com/semsol/arc2">ARC Toolkit</a>
-Version: 0.01 (2012-02-01)
+Version: 0.02
 Author: Peter Shaw
 Author URI: http://shawfactor.com/
 
@@ -11,6 +11,9 @@ Author URI: http://shawfactor.com/
 
 = 0.01 =
 * Mapped WP relationships to SIOC triples
+
+= 0.02 =
+* AUtomatically install Arc
 
 License:
 Released under the GPL license
@@ -34,6 +37,10 @@ add_action('template_redirect', 'rdf_tools_handle_request');
 register_activation_hook('lh-tools/rdf-tools.php', 'rdf_tools_activate');
 register_deactivation_hook('lh-tools/rdf-tools.php', 'rdf_tools_deactivate');
 
+/* defines */
+define('LH_TOOLS_PLUGIN_DIR', dirname(__FILE__));
+define('LH_TOOLS_ARC_URL', 'https://github.com/semsol/arc2/tarball/master');
+
 
 /* init */
 
@@ -42,6 +49,7 @@ function rdf_tools_activate() {
   foreach ($flds as $fld) {
     add_option('rdf_tools_' . $fld, '');
   }
+lh_tools_install_arc ();
 }
 
 function rdf_tools_deactivate() {
@@ -264,22 +272,26 @@ function rdf_tools_get_endpoint_timeout() {
   return 60;
 }
 
+
+
+
 /* install ARC2 for sunning the endpoint */
-function pp_thesaurus_install_arc () {
-	if (file_exists(PP_THESAURUS_PLUGIN_DIR . '/arc/ARC2.php') || class_exists('ARC2')) {
+function lh_tools_install_arc () {
+
+if (file_exists(LH_TOOLS_PLUGIN_DIR . '/arc/ARC2.php') || class_exists('ARC2')) {
 		return true;
 	}
 
-	if (!is_writable(PP_THESAURUS_PLUGIN_DIR)) {
+	if (!is_writable(LH_TOOLS_PLUGIN_DIR)) {
 		return false;
 	}
 
 	$sDir = getcwd();
-	chdir(PP_THESAURUS_PLUGIN_DIR);
+	chdir(LH_TOOLS_PLUGIN_DIR);
 
 	// download ARC2
 	$sTarFileName 	= 'arc.tar.gz';
-	$sCmd 			= 'wget --no-check-certificate -T 2 -t 1 -O ' . $sTarFileName . ' ' . PP_THESAURUS_ARC_URL . ' 2>&1';
+	$sCmd 			= 'wget --no-check-certificate -T 2 -t 1 -O ' . $sTarFileName . ' ' . LH_TOOLS_ARC_URL . ' 2>&1';
 	$aOutput 		= array();
 	exec($sCmd, $aOutput, $iResult);
 	if ($iResult != 0) {
