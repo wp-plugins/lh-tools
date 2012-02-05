@@ -3,7 +3,7 @@
 Plugin Name: LH Tools
 Plugin URI: http://localhero.biz/plugins/lh-tools/
 Description: RDF Storage and related tools. Requires the <a href="https://github.com/semsol/arc2">ARC Toolkit</a>
-Version: 0.02
+Version: 0.03
 Author: Peter Shaw
 Author URI: http://shawfactor.com/
 
@@ -13,7 +13,10 @@ Author URI: http://shawfactor.com/
 * Mapped WP relationships to SIOC triples
 
 = 0.02 =
-* AUtomatically install Arc
+* Automatically install Arc
+
+= 0.03 =
+* Bugfix
 
 License:
 Released under the GPL license
@@ -34,8 +37,9 @@ You should have received a copy of the GNU General Public License along with thi
 add_action('admin_menu', 'rdf_tools_handle_admin_request');
 add_action('template_redirect', 'rdf_tools_handle_request');
 
-register_activation_hook('lh-tools/rdf-tools.php', 'rdf_tools_activate');
-register_deactivation_hook('lh-tools/rdf-tools.php', 'rdf_tools_deactivate');
+register_activation_hook(__FILE__, 'rdf_tools_activate');
+register_deactivation_hook(__FILE__, 'rdf_tools_deactivate');
+register_activation_hook(__FILE__, 'lh_tools_install_arc' );
 
 /* defines */
 define('LH_TOOLS_PLUGIN_DIR', dirname(__FILE__));
@@ -49,7 +53,6 @@ function rdf_tools_activate() {
   foreach ($flds as $fld) {
     add_option('rdf_tools_' . $fld, '');
   }
-lh_tools_install_arc ();
 }
 
 function rdf_tools_deactivate() {
@@ -276,7 +279,7 @@ function rdf_tools_get_endpoint_timeout() {
 
 
 /* install ARC2 for sunning the endpoint */
-function lh_tools_install_arc () {
+function lh_tools_install_arc(){
 
 if (file_exists(LH_TOOLS_PLUGIN_DIR . '/arc/ARC2.php') || class_exists('ARC2')) {
 		return true;

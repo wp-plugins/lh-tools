@@ -14,17 +14,21 @@ LH Tools is a wordpress plugin that enables a sparql endpoint for for WordPress 
 
 == Installation ==
 
-Make sure you made a backup of your WordPress database. 
-"RDF Tools" creates and uses tables that are completely 
-separate from the WordPress ones, but a backup of your
-blog data can't hurt nonetheless!
+Install using WordPress:
 
+1. Log in and go to *Plugins* and click on *Add New*.
+2. Search for *LH Tools* and hit the *Install Now* link in the results. WordPress will install it.
+3. From the Plugin Management page in Wordpress, activate the *Lh Tools* plugin.
+4. Go to *Settings* -> *LH Tools* in the Wordpress menu and specify the settings and activae your Sparql endpoint.
 
-1. Upload "lh-tools" to "/wp-content/plugins/".
-2. Download ARC from https://github.com/semsol/arc2/
-3. Upload the ARC files to "/wp-content/plugins/lh-tools/arc" 
-4. Activate "LH Tools" through the "Plugins" menu in WordPress.
-5. Go to "Options" -> "LH Tools" in Wordpress and configure the plugin
+Install manually:
+
+1. Download the plugin zip file and unzip it.
+2. Upload the plugin contents into your WordPress installation*s plugin directory on the server. The plugin*s .php files, readme.txt and subfolders should be installed in the *wp-content/plugins/lh-tools/* directory.
+3. Download ARC2 from https://github.com/semsol/arc2 and unzip it.
+4. Open the unziped folder and upload the entire contents into the */wp-content/plugins/lh-tools/arc/* directory.
+5. From the Plugin Management page in Wordpress, activate the *LH Tools* plugin.
+6. Go to *Settings* -> *LH Tools* in the Wordpress menu and specify the settings and activae your Sparql endpoint.
 
 == Changelog ==
 
@@ -33,3 +37,6 @@ Initial release.
 
 **0.0.2 February 04, 2012**  
 Automatically install Arc
+
+**0.0.3 February 04, 2012**  
+Bugfix
