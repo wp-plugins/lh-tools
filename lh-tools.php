@@ -3,7 +3,7 @@
 Plugin Name: LH Tools
 Plugin URI: http://localhero.biz/plugins/lh-tools/
 Description: RDF Storage and related tools. Requires the <a href="https://github.com/semsol/arc2">ARC Toolkit</a>
-Version: 0.03
+Version: 0.04
 Author: Peter Shaw
 Author URI: http://shawfactor.com/
 
@@ -18,6 +18,10 @@ Author URI: http://shawfactor.com/
 = 0.03 =
 * Bugfix
 
+= 0.04 =
+* Bugfix
+
+
 License:
 Released under the GPL license
 http://www.gnu.org/copyleft/gpl.html
@@ -25,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.html
 Copyright 2011  Peter Shaw  (email : pete@localhero.biz)
 
 
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published bythe Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
@@ -35,7 +39,7 @@ You should have received a copy of the GNU General Public License along with thi
 /* hooks */
 
 add_action('admin_menu', 'rdf_tools_handle_admin_request');
-add_action('template_redirect', 'rdf_tools_handle_request');
+//add_action('template_redirect', 'rdf_tools_handle_request');
 
 register_activation_hook(__FILE__, 'rdf_tools_activate');
 register_deactivation_hook(__FILE__, 'rdf_tools_deactivate');
@@ -81,13 +85,10 @@ function rdf_tools_get_options_form() {
       <form method="post" action="">
         <input type="hidden" name="rdf_tools_token" value="' . rdf_tools_get_token() . '" />
         <h2>Plugin options for "LH Tools"</h2>
-        <p class="submit">
-          <input type="submit" name="Submit" value="' . __('Update Options') . '" />
-        </p>
         ' . rdf_tools_get_store_options_fields() . '
         ' . rdf_tools_get_endpoint_options_fields() . '
         <p class="submit">
-          <input type="submit" name="Submit" value="' . __('Update Options') . '" />
+<input type="submit" name="Submit" value="' . __('Update Options') . '" />
         </p>
       </form>
     </div>
@@ -118,7 +119,6 @@ function rdf_tools_get_store_options_fields() {
           <input type="checkbox" id="store_reset" name="store_reset" value="t" />
           Delete all data from the RDF Store
         </span>
-        <div class="clb"></div>
       </div>
     ';
     $r .= '
@@ -128,7 +128,6 @@ function rdf_tools_get_store_options_fields() {
           <input type="checkbox" id="store_drop" name="store_drop" value="t" />
           Delete the RDF Store (including the database tables)
         </span>
-        <div class="clb"></div>
       </div>
     ';
   }
@@ -138,6 +137,18 @@ function rdf_tools_get_store_options_fields() {
       ' . $r .'
     </fieldset>
   ';
+}
+
+function lh_tools_get_lh_rdf_get_link(){
+
+if (function_exists('LH_rdf_get_link')){
+
+$foobar = LH_rdf_get_link();
+
+return "or <a href=\"".$foobar."\">".$foobar."</a>";
+
+}
+
 }
 
 function rdf_tools_get_endpoint_options_fields() {
@@ -151,7 +162,6 @@ function rdf_tools_get_endpoint_options_fields() {
           <input type="checkbox" id="endpoint_active" name="endpoint_active" value="t" ' . (rdf_tools_get_setting('endpoint_active') ? 'checked="checked"' : '') . ' />
           Activate the SPARQL Endpoint at <a href="' . get_bloginfo('wpurl') .'/wp-content/plugins/lh-tools/">/wp-content/plugins/lh-tools/</a>
         </span>
-        <div class="clb"></div>
       </div>
 
       <div class="form-item">
@@ -159,26 +169,27 @@ function rdf_tools_get_endpoint_options_fields() {
         <span class="field">
           <input type="text" id="endpoint_max_limit" name="endpoint_max_limit" value="' . rdf_tools_get_setting('endpoint_max_limit') . '" />
         </span>
-        <div class="clb"></div>
       </div>
 
       <div class="form-item">
-        <label><a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL Read</a> features</label>
-        <span class="field">
+        <label><a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL Read</a> features</label><br/>
+
+<span class="field">
           ' . rdf_tools_get_endpoint_features_fields(array('select', 'ask', 'construct', 'describe')). '
           Required API key: <input type="text" id="endpoint_read_key" name="endpoint_read_key" value="' . get_option('rdf_tools_endpoint_read_key') . '" />
         </span>
-        <div class="clb"></div>
       </div>
 
       <div class="form-item">
-        <label><a href="http://arc.semsol.org/docs/v2/sparql+">SPARQL Write</a> features</label>
-        <span class="field">
+<label><a href="http://arc.semsol.org/docs/v2/sparql+">SPARQL Write</a> features</label><br/>
+
+<span class="field">
           ' . rdf_tools_get_endpoint_features_fields(array('load', 'insert', 'delete')). '
-          Required API key: <input type="text" id="endpoint_write_key" name="endpoint_write_key" value="' . get_option('rdf_tools_endpoint_write_key') . '" />
+Required API key: <input type="text" id="endpoint_write_key" name="endpoint_write_key" value="' . get_option('rdf_tools_endpoint_write_key') . '" /><br/>
+<strong><a href="http://localhero.biz/plugins/lh-tools/lh-tools-load-options/">Load Options</a></strong><br/>
+Automatically load rdf from this source: <input type="text" size="70" id="endpoint_src_file" name="endpoint_src_file" value="' . get_option('rdf_tools_endpoint_src_file') . '" /><br/> E.G. <a href="' . get_bloginfo('rdf_url') . '">' . get_bloginfo('rdf_url') . '</a> ' . lh_tools_get_lh_rdf_get_link() . '
         </span>
-        <div class="clb"></div>
-      </div>
+      </div> 
 
     </fieldset>
   ';
@@ -227,6 +238,7 @@ function rdf_tools_get_option_list() {
     'endpoint_features',
     'endpoint_read_key',
     'endpoint_write_key',
+    'endpoint_src_file',
   );
 }
 
@@ -326,6 +338,206 @@ if (file_exists(LH_TOOLS_PLUGIN_DIR . '/arc/ARC2.php') || class_exists('ARC2')) 
 	
 	chdir($sDir);
 	return true;
+}
+
+
+function lh_tools_return_hash($initialgraph){
+
+$ch = curl_init(); 
+curl_setopt($ch, CURLOPT_URL, $initialgraph); 
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+$data = curl_exec($ch);
+curl_close($ch);
+
+$hash = sha1($data);
+
+return $hash;
+
+}
+
+
+function lh_tools_insert_graph($insertgraph,$store){
+
+//find the hash of the graph to potentially insert
+
+$hash = lh_tools_return_hash($insertgraph);
+
+//compare hash to other graphs in the store
+
+$q = "SELECT distinct ?g WHERE { GRAPH ?g { ?g <http://localhero.biz/#hash_hash> \"".$hash."\" } }";
+
+$compare_result = $store->query($q);
+
+//if a graph with that hash already exists update hash and date only
+
+if ($compare_result[result][rows][0][g]){
+
+echo "already exists";
+
+$q = "DELETE { <".$insertgraph."> <http://localhero.biz/#hash_hash> ?hash }";
+
+$rs = $store->query($q);
+
+
+$q = "INSERT INTO <".$insertgraph."> { <".$insertgraph."> <http://localhero.biz/#hash_hash> \"".$hash."\" . }";
+
+$store->query($q);
+
+$q = "DELETE { <".$insertgraph."> <http://purl.org/dc/elements/1.1/date> ?date }";
+
+$rs = $store->query($q);
+
+
+$strFormat = 'Y-m-d\TH:i:s.uP';
+$strDate = $intDate ? date( $strFormat, $intDate ) : date( $strFormat ) ;
+   
+echo $strDate;
+
+$q = "INSERT INTO <".$insertgraph."> { <".$insertgraph."> <http://purl.org/dc/elements/1.1/date> \"".$strDate."\" . }";
+
+echo $q;
+
+$store->query($q);
+
+echo $insertgraph." has been updated with a new date";
+
+
+} else {
+
+//Otherwise load the new graph
+
+$q = "LOAD <".$insertgraph."> into <".$insertgraph.">";
+
+$store->query($q);
+
+//ad its hash
+
+$q = "INSERT INTO <".$insertgraph."> { <".$insertgraph."> <http://localhero.biz/#hash_hash> \"".$hash."\" . }";
+
+$store->query($q);
+
+//Give it a date
+
+$strFormat = 'Y-m-d\TH:i:s.uP';
+$strDate = $intDate ? date( $strFormat, $intDate ) : date( $strFormat ) ;
+   
+
+$q = "INSERT INTO <".$insertgraph."> { <".$insertgraph."> <http://purl.org/dc/elements/1.1/date> \"".$strDate."\" . }";
+
+echo $q;
+
+$store->query($q);
+
+echo $insertgraph." loaded";
+
+}
+
+}
+
+
+
+
+function lh_tools_load_endpoint(){
+  
+global $table_prefix;
+
+include_once(ABSPATH . 'wp-content/plugins/lh-tools/arc/ARC2.php');
+
+  $config = array(
+    /* db */
+    'db_host' => DB_HOST,
+    'db_name' => DB_NAME,
+    'db_user' => DB_USER,
+    'db_pwd' => DB_PASSWORD,
+    /* store */
+    'store_name' => $table_prefix . 'lh_tools_store',
+  'store_allow_extension_functions' => 1,
+    /* endpoint */
+    'endpoint_features' => rdf_tools_get_setting('endpoint_features'),
+    'endpoint_timeout' => rdf_tools_get_setting('endpoint_timeout'),
+    'endpoint_max_limit' => rdf_tools_get_setting('endpoint_max_limit'),
+    'endpoint_read_key' => rdf_tools_get_setting('endpoint_read_key'),
+    'endpoint_write_key' => rdf_tools_get_setting('endpoint_write_key'),
+  );
+
+$initialgraph = rdf_tools_get_setting('endpoint_src_file');
+
+//Check if the inital graph is already in the store
+
+$store = ARC2::getStore($config);
+
+$q = "SELECT ?hash WHERE { <".$initialgraph."> <http://localhero.biz/#hash_hash> ?hash }";
+
+$feeds = $store->query($q);
+
+$feed = $feeds[result][rows];
+
+if (!$feed[0]){
+
+//If its not there add the initial graph
+
+lh_tools_insert_graph($initialgraph, $store);
+
+} else {
+
+//Otherwise follow local sameas triples which have not been visitted
+
+$parse=  parse_url($initialgraph);
+
+$q = "SELECT * WHERE { ?subject <http://www.w3.org/2000/01/rdf-schema#seeAlso> ?also . OPTIONAL { ?also <http://localhero.biz/#hash_hash> ?hash } FILTER (!bound(?hash)) FILTER  (regex(str(?also),\"^".$parse[scheme]."://".$parse[host]."\")) }";
+
+echo $q;
+
+$rs = $store->query($q);
+
+print_r($rs);
+
+if ($rs[result][rows][0]){
+
+//Load the same as
+
+lh_tools_insert_graph($rs[result][rows][0][also], $store);
+
+} else {
+
+//Otherwise find already loaded graphs and check to see if they need to be updated
+
+$q = "SELECT * WHERE { GRAPH ?g { ?g <http://localhero.biz/#hash_hash> ?hash . ?g <http://purl.org/dc/elements/1.1/date> ?date} } ORDER BY ASC(?date)";
+
+$rs = $store->query($q);
+
+lh_tools_insert_graph($rs[result][rows][0][g], $store);
+
+echo "none left";
+
+
+}
+
+}
+
+
+
+}
+
+
+
+$initialgraph = rdf_tools_get_setting('endpoint_src_file');
+
+if ($initialgraph){
+
+
+add_action('lh_tools_load_endpoint_hourly', 'lh_tools_load_endpoint');
+
+function lh_tools_endpoint_activation() {
+if ( !wp_next_scheduled( 'lh_tools_load_endpoint_hourly' ) ) {
+
+wp_schedule_event(time(), 'hourly', 'lh_tools_load_endpoint_hourly');
+
+}
+}
+
+add_action('wp', 'lh_tools_endpoint_activation');
+
 }
 
 
