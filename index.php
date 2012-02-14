@@ -9,6 +9,7 @@ include("../../../wp-blog-header.php");
 if(rdf_tools_get_setting('endpoint_active')) {
 
 
+
 include_once(ABSPATH . 'wp-content/plugins/lh-tools/arc/ARC2.php');
 
   $config = array(
