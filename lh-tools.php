@@ -3,7 +3,7 @@
 Plugin Name: LH Tools
 Plugin URI: http://localhero.biz/plugins/lh-tools/
 Description: RDF Storage and related tools. Requires the <a href="https://github.com/semsol/arc2">ARC Toolkit</a>
-Version: 0.04
+Version: 0.05
 Author: Peter Shaw
 Author URI: http://shawfactor.com/
 
@@ -19,7 +19,10 @@ Author URI: http://shawfactor.com/
 * Bugfix
 
 = 0.04 =
-* Bugfix
+* added endpoint autoload feature
+
+= 0.05 =
+* Added some error tracking
 
 
 License:
@@ -80,6 +83,9 @@ function rdf_tools_handle_admin_options() {
 }
 
 function rdf_tools_get_options_form() {
+
+
+if (file_exists(LH_TOOLS_PLUGIN_DIR . '/arc/ARC2.php') ) {
   $r = '
     <div class="wrap rdf-tools">
       <form method="post" action="">
@@ -93,12 +99,32 @@ function rdf_tools_get_options_form() {
       </form>
     </div>
   ';
+} else {
+
+$r .= '<p>Arc does not seem to be installed</p>';
+
+$r .= '<p>Usually deactivating and reactivating the plugin will fix this, alternatively you can install Arc manually.</p>';
+
+$r .= '<h3>To install Arc manually</h3>';
+
+$r .= '<ol>
+<li>Download ARC2 from https://github.com/semsol/arc2 and unzip it.</li>
+<li>Open the unzipped folder and upload the entire contents into the */wp-content/plugins/lh-tools/arc/* directory.</li>
+<li>From the Plugin Management page in Wordpress, activate the *LH Tools* plugin.</li>
+<li>Go to *Settings* -> *LH Tools* in the Wordpress menu and specify the settings and activae your Sparql endpoint.</li>
+</ol>';
+
+}
   return $r;
 }
 
 function rdf_tools_get_store_options_fields() {
+
+
   $ep = rdf_tools_get_endpoint();
+
   $r = '';
+
   if (!$ep->isSetUp()) {
     $r .= '
       <div class="form-item">
@@ -110,8 +136,7 @@ function rdf_tools_get_store_options_fields() {
         <div class="clb"></div>
       </div>
     ';
-  }
-  else {
+  } else {
     $r .= '
       <div class="form-item">
         <label>Reset the RDF Store</label>
@@ -137,6 +162,7 @@ function rdf_tools_get_store_options_fields() {
       ' . $r .'
     </fieldset>
   ';
+
 }
 
 function lh_tools_get_lh_rdf_get_link(){
@@ -152,6 +178,8 @@ return "or <a href=\"".$foobar."\">".$foobar."</a>";
 }
 
 function rdf_tools_get_endpoint_options_fields() {
+
+
   return '
     <fieldset>
       <legend>SPARQL Endpoint Options</legend>
@@ -193,6 +221,8 @@ Automatically load rdf from this source: <input type="text" size="70" id="endpoi
 
     </fieldset>
   ';
+
+
 }
 
 function rdf_tools_get_endpoint_features_fields($flds) {
