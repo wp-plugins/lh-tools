@@ -46,3 +46,6 @@ Added the ability to automatically load and spider a RDF source
 
 **0.0.5 February 15, 2012**  
 Added install error tracking
+
+**0.0.6 February 15, 2012**  
+Added icon
