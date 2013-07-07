@@ -3,7 +3,7 @@
 Plugin Name: LH Tools
 Plugin URI: http://localhero.biz/plugins/lh-tools/
 Description: RDF Storage and related tools. Requires the <a href="https://github.com/semsol/arc2">ARC Toolkit</a>
-Version: 0.06
+Version: 0.08
 Author: Peter Shaw
 Author URI: http://shawfactor.com/
 
@@ -26,6 +26,13 @@ Author URI: http://shawfactor.com/
 
 = 0.06 =
 * Added icon
+
+= 0.07 =
+* Added widgets
+
+= 0.08 =
+* Improved widgets
+
 
 
 License:
@@ -54,6 +61,10 @@ register_activation_hook(__FILE__, 'lh_tools_install_arc' );
 /* defines */
 define('LH_TOOLS_PLUGIN_DIR', dirname(__FILE__));
 define('LH_TOOLS_ARC_URL', 'https://github.com/semsol/arc2/tarball/master');
+
+/* includes */
+include_once('library/the_widgets.php');
+include_once('library/functions.php');
 
 
 /* init */
@@ -191,7 +202,7 @@ function rdf_tools_get_endpoint_options_fields() {
         <label for="endpoint_max_limit">Activate</label>
         <span class="field">
           <input type="checkbox" id="endpoint_active" name="endpoint_active" value="t" ' . (rdf_tools_get_setting('endpoint_active') ? 'checked="checked"' : '') . ' />
-          Activate the SPARQL Endpoint at <a href="' . get_bloginfo('wpurl') .'/wp-content/plugins/lh-tools/">/wp-content/plugins/lh-tools/</a>
+          Activate the SPARQL Endpoint at <a href="'.plugins_url().'/lh-tools/">'.plugins_url().'/lh-tools/</a>
         </span>
       </div>
 
