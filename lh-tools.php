@@ -3,7 +3,7 @@
 Plugin Name: LH Tools
 Plugin URI: http://localhero.biz/plugins/lh-tools/
 Description: RDF Storage and related tools. Requires the <a href="https://github.com/semsol/arc2">ARC Toolkit</a>
-Version: 0.08
+Version: 0.09
 Author: Peter Shaw
 Author URI: http://shawfactor.com/
 
@@ -32,6 +32,10 @@ Author URI: http://shawfactor.com/
 
 = 0.08 =
 * Improved widgets
+
+= 0.09 =
+* Widget updates
+
 
 
 

@@ -87,6 +87,7 @@ var heading  = document.createElement('h2');
 heading.appendChild(txt);
 divArray.parentNode.insertBefore(heading,divArray);
 
+
 var otherspan  = document.createElement('span');
 
 var artimg  = document.createElement('img');
@@ -100,6 +101,16 @@ artimg.setAttribute('src', 'http://labs.google.com/ridefinder/images/mm_20_red.p
 var txt = document.createTextNode("other articles");
 otherspan.appendChild(artimg);
 otherspan.appendChild(txt);
+var txt = document.createTextNode("View larger Map");
+var anchor  = document.createElement('a');
+anchor.setAttribute("href",divArray.getAttribute("data-lh_tools_url") + 'scripts/map.html');
+anchor.style.fontSize = '80%';
+var image  = document.createElement('image');
+image.setAttribute('src', document.getElementById("map_canvas").getAttribute("data-lh_tools_url") + 'images/magnify_icon.png');
+anchor.appendChild(image);
+anchor.appendChild(txt);
+otherspan.appendChild(anchor);
+
 
 divArray.parentNode.insertBefore(otherspan,divArray.nextSibling);
 

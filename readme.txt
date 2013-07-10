@@ -55,3 +55,6 @@ Added widgets
 
 **0.0.8 July 6, 2013**  
 Improved widgets
+
+**0.0.9 July 10, 2013**  
+Widget updates
