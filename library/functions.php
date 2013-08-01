@@ -159,17 +159,7 @@ function lh_tools_getSPARQLJSONSelectResultDoc($r) {
   return $r;
 }
 
-function pingback_format_link_url($post_links, $post_id) {
 
-$url = "http://shawfactor.com/wp-content/plugins/lh-tools/ping.php?url=";
-
-$permalink  = get_permalink($post_id)."feed=lhrdf";
-
-if (!empty($url) && !in_array($url, $post_links)) {		$post_links[] = $url;	}
-return $post_links;
-}
-
-add_filter('pre_ping_post_links', 'pingback_format_link_url', 10, 2); 
 
 
 
