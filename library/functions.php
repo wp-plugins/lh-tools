@@ -95,5 +95,82 @@ echo $graph." loaded\n";
 
 }
 
+function lh_tools_escapeJavaScriptText($string){
+    return str_replace("\n", '\n', str_replace('"', '\"', addcslashes(str_replace("\r", '', (string)$string), "\0..\37'\\")));
+}
+
+function lh_tools_getSPARQLJSONSelectResultDoc($r) {
+  $vars = $r['result']['variables'];
+  $rows = $r['result']['rows'];
+  $dur = $r['query_time'];
+  $nl = "\n";
+  /* doc */
+  $r = '{';
+  /* head */
+  $r .= $nl . '  "head": {';
+  $r .= $nl . '    "vars": [';
+  $first_var = 1;
+  foreach ($vars as $var) {
+    $r .= $first_var ? $nl : ',' . $nl;
+    $r .= '      "' . $var . '"';
+    $first_var = 0;
+  }
+  $r .= $nl . '    ]';
+  $r .= $nl . '  },';
+  /* results */
+  $r .= $nl . '  "results": {';
+  $r .= $nl . '    "bindings": [';
+  $first_row = 1;
+  foreach ($rows as $row) {
+    $r .= $first_row ? $nl : ',' . $nl;
+    $r .= '      {';
+    $first_var = 1;
+    foreach ($vars as $var) {
+      if (isset($row[$var])) {
+        $r .= $first_var ? $nl : ',' . $nl . $nl;
+        $r .= '        "' . $var . '": {';
+        if ($row[$var . ' type'] == 'uri') {
+          $r .= $nl . '          "type": "uri",';
+          $r .= $nl . '          "value": "' . lh_tools_escapeJavaScriptText($row[$var]) . '"';
+        }
+        elseif ($row[$var . ' type'] == 'bnode') {
+          $r .= $nl . '          "type": "bnode",';
+          $r .= $nl . '          "value": "' . substr($row[$var], 2) . '"';
+        }
+        else {
+          $dt = isset($row[$var . ' datatype']) ? ',' . $nl . '          "datatype": "' . lh_tools_escapeJavaScriptText($row[$var . ' datatype']) . '"' : '';
+          $lang = isset($row[$var . ' lang']) ? ',' . $nl . '          "xml:lang": "' . lh_tools_escapeJavaScriptText($row[$var . ' lang']) . '"' : '';
+          $type = $dt ? 'typed-literal' : 'literal';
+          $r .= $nl . '          "type": "' . $type . '",';
+          $r .= $nl . '          "value": ' . json_encode($row[$var]) . '';
+          $r .= $dt . $lang;
+        }
+        $r .= $nl . '        }';
+        $first_var = 0;
+      }
+    }
+    $r .= $nl . '      }';
+    $first_row = 0;
+  }
+  $r .= $nl . '    ]';
+  $r .= $nl . '  }';
+  /* /doc */
+  $r .= $nl . '}';
+  return $r;
+}
+
+function pingback_format_link_url($post_links, $post_id) {
+
+$url = "http://shawfactor.com/wp-content/plugins/lh-tools/ping.php?url=";
+
+$permalink  = get_permalink($post_id)."feed=lhrdf";
+
+if (!empty($url) && !in_array($url, $post_links)) {		$post_links[] = $url;	}
+return $post_links;
+}
+
+add_filter('pre_ping_post_links', 'pingback_format_link_url', 10, 2); 
+
+
 
 ?>

@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 3.6
 Stable tag: trunk
 
-LH Tools is a wordpress plugin that enables a sparql endpoint for for WordPress sites. This will enable semantic querying of WordPress data either from the site itself or from external providers of RDF triples.
+LH Tools is a wordpress plugin that enables a sparql endpoint for for WordPress sites. This will enable semantic querying of WordPress data.
 
 == Description ==
 
@@ -58,3 +58,6 @@ Improved widgets
 
 **0.0.9 July 10, 2013**  
 Widget updates
+
+**0.1.0 July 31, 2013**  
+Widget fixes

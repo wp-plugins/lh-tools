@@ -3,7 +3,7 @@
 Plugin Name: LH Tools
 Plugin URI: http://localhero.biz/plugins/lh-tools/
 Description: RDF Storage and related tools. Requires the <a href="https://github.com/semsol/arc2">ARC Toolkit</a>
-Version: 0.09
+Version: 0.10
 Author: Peter Shaw
 Author URI: http://shawfactor.com/
 
@@ -35,6 +35,9 @@ Author URI: http://shawfactor.com/
 
 = 0.09 =
 * Widget updates
+
+= 0.10 =
+* Widget fixes and improved api
 
 
 
@@ -185,9 +188,9 @@ function rdf_tools_get_store_options_fields() {
 
 function lh_tools_get_lh_rdf_get_link(){
 
-if (function_exists('LH_rdf_get_link')){
+if (function_exists('lh_rdf_get_link')){
 
-$foobar = LH_rdf_get_link();
+$foobar = lh_rdf_get_link();
 
 return "or <a href=\"".$foobar."\">".$foobar."</a>";
 

@@ -70,7 +70,6 @@ if (var1.results.bindings.length){
 
 expected = var1;
 
-
 loadjscssfile('http://maps.google.com/maps/api/js?sensor=true&callback=final_test', 'js');
 
 }
@@ -147,9 +146,9 @@ mapcanvasdiv = document.getElementById("map_canvas");
 
 endpoint = mapcanvasdiv.getAttribute("data-lh_tools_url");
 
-bar1 = endpoint + '?query=';
+bar1 = endpoint + 'api.php?query=';
 
-var sparqle_query = 'SELECT ?s ?title ?lat ?lng COUNT(?tag) AS ?tags WHERE {<$subject> <http://rdfs.org/sioc/ns#topic> ?tag . ?s <http://rdfs.org/sioc/ns#topic> ?tag . ?s <http://rdfs.org/sioc/ns#topic> ?o . ?s <http://purl.org/dc/elements/1.1/title> ?title . ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/place> . ?o <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat . ?o <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lng . FILTER (?lat >= $sw_latitude) . FILTER (?lat <= $ne_latitude) . FILTER (?lng >= $sw_longitude) . FILTER (?lng <= $ne_longitude) . FILTER(str(?s)!="$subject") } GROUP BY ?s order by desc(?tags) LIMIT 10 OFFSET 0';
+var sparqle_query = 'SELECT ?s ?title ?lat ?lng COUNT(?tag) AS ?tags WHERE {<$subject> sioc:topic ?tag . ?s sioc:topic ?tag . ?s sioc:topic ?o . ?s dc:title ?title . ?o rdfs:type <http://dbpedia.org/ontology/place> . ?o wgs84:lat ?lat . ?o wgs84:long ?lng . FILTER (?lat >= $sw_latitude) . FILTER (?lat <= $ne_latitude) . FILTER (?lng >= $sw_longitude) . FILTER (?lng <= $ne_longitude) . FILTER(str(?s)!="$subject") } GROUP BY ?s order by desc(?tags) LIMIT 10 OFFSET 0';
 
 
 var sparqle_query = sparqle_query.replace("$sw_latitude", map.getBounds().getSouthWest().lat());
@@ -161,9 +160,10 @@ var sparqle_query = sparqle_query.replace("$subject", subject);
 
 var sparqle_query = encodeURIComponent(sparqle_query);
 
-bar2 = '&output=json&callback=bounds_handler';
+bar2 = '&callback=bounds_handler';
 
 bar = bar1 + sparqle_query + bar2;
+
 
 loadjscssfile(bar, 'js');
 
@@ -174,12 +174,13 @@ loadjscssfile(bar, 'js');
 }
 
 
+function lh_tools_article_location(){
 
 subject = getElements();
 
-endpoint = 'http://shawfactor.com/wp-content/plugins/lh-tools/?output=json&callback=json_handler&query=';
+endpoint = document.getElementById('map_canvas').getAttribute("data-lh_tools_url") + 'api.php?callback=json_handler&query=';
 
-sparqle_query = 'SELECT * WHERE { <$subject_var> <http://rdfs.org/sioc/ns#topic> ?o . ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/place> . ?o <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat . ?o <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lng }';
+sparqle_query = 'SELECT * WHERE { <$subject_var> sioc:topic ?o . ?o rdfs:type <http://dbpedia.org/ontology/place> . ?o wgs84:lat ?lat . ?o wgs84:long ?lng }';
 
 sparqle_query = sparqle_query.replace("$subject_var", subject);
 
@@ -188,9 +189,12 @@ sparqle_query = encodeURIComponent(sparqle_query);
 foo = endpoint + sparqle_query;
 
 
+
 loadjscssfile(foo, 'js');
 
+}
 
+lh_tools_article_location();
 
 function lh_tools_related_articles(){
 
@@ -200,7 +204,7 @@ subject = document.getElementById('lh_tools_related_articles_div').getAttribute(
 
 bar1 = document.getElementById('lh_tools_related_articles_div').getAttribute('data-lh_tools_url') + '?query=';
 
-var sparqle_query = 'SELECT ?s ?thumbnailsize ?title ?abstract COUNT(?topic) AS ?topics WHERE {<$subject> <http://rdfs.org/sioc/ns#topic> ?topic . ?s <http://rdfs.org/sioc/ns#topic> ?topic . ?s <http://purl.org/dc/elements/1.1/title> ?title .  ?s <http://purl.org/dc/elements/1.1/abstract> ?abstract . OPTIONAL { ?s <http://localhero.biz/uri/localhero-namespace/post_thumbnail> ?postthumbnail . ?postthumbnail <http://xmlns.com/foaf/0.1/thumbnail> ?thumbnailsize .  ?thumbnailsize <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://localhero.biz/uri/localhero-namespace/thumbnail>   } . FILTER (?s !=<$subject>) } GROUP BY ?s order by desc(?topics) LIMIT';
+var sparqle_query = 'SELECT ?s ?thumbnailsize ?title ?abstract COUNT(?topic) AS ?topics WHERE {<$subject> sioc:topic ?topic . ?s sioc:topic ?topic . ?s dc:title ?title .  ?s dc:abstract ?abstract . OPTIONAL { ?s lh:post_thumbnail ?postthumbnail . ?postthumbnail foaf:thumbnail ?thumbnailsize .  ?thumbnailsize rdfs:type lh:thumbnail   } . FILTER (?s !=<$subject>) } GROUP BY ?s order by desc(?topics) LIMIT';
 
 if (screen.width > 460){
 
