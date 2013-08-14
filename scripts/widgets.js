@@ -52,16 +52,6 @@ fileref.setAttribute("media", "print")
 
 
 
-function getElements() {
-
-var x=document.getElementsByTagName("article");
-
-return x[0].getAttribute('itemid');
-
- }
-
-
-
 
 function json_handler(var1) {
 
@@ -148,7 +138,7 @@ endpoint = mapcanvasdiv.getAttribute("data-lh_tools_url");
 
 bar1 = endpoint + 'api.php?query=';
 
-var sparqle_query = 'SELECT ?s ?title ?lat ?lng COUNT(?tag) AS ?tags WHERE {<$subject> sioc:topic ?tag . ?s sioc:topic ?tag . ?s sioc:topic ?o . ?s dc:title ?title . ?o rdfs:type <http://dbpedia.org/ontology/place> . ?o wgs84:lat ?lat . ?o wgs84:long ?lng . FILTER (?lat >= $sw_latitude) . FILTER (?lat <= $ne_latitude) . FILTER (?lng >= $sw_longitude) . FILTER (?lng <= $ne_longitude) . FILTER(str(?s)!="$subject") } GROUP BY ?s order by desc(?tags) LIMIT 10 OFFSET 0';
+var sparqle_query = 'SELECT ?s ?title ?lat ?lng COUNT(?tag) AS ?tags WHERE {<$subject> sioc:topic ?tag . ?s sioc:topic ?tag . ?s sioc:topic ?o . ?s dc:title ?title . ?o rdfs:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng . FILTER (?lat >= $sw_latitude) . FILTER (?lat <= $ne_latitude) . FILTER (?lng >= $sw_longitude) . FILTER (?lng <= $ne_longitude) . FILTER(str(?s)!="$subject") } GROUP BY ?s order by desc(?tags) LIMIT 10 OFFSET 0';
 
 
 var sparqle_query = sparqle_query.replace("$sw_latitude", map.getBounds().getSouthWest().lat());
@@ -164,7 +154,6 @@ bar2 = '&callback=bounds_handler';
 
 bar = bar1 + sparqle_query + bar2;
 
-
 loadjscssfile(bar, 'js');
 
 
@@ -176,11 +165,11 @@ loadjscssfile(bar, 'js');
 
 function lh_tools_article_location(){
 
-subject = getElements();
+subject = document.getElementById('map_canvas').getAttribute("data-uriref");
 
 endpoint = document.getElementById('map_canvas').getAttribute("data-lh_tools_url") + 'api.php?callback=json_handler&query=';
 
-sparqle_query = 'SELECT * WHERE { <$subject_var> sioc:topic ?o . ?o rdfs:type <http://dbpedia.org/ontology/place> . ?o wgs84:lat ?lat . ?o wgs84:long ?lng }';
+sparqle_query = 'SELECT * WHERE { <$subject_var> sioc:topic ?o . ?o rdfs:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng }';
 
 sparqle_query = sparqle_query.replace("$subject_var", subject);
 
@@ -202,7 +191,7 @@ if (document.getElementById('lh_tools_related_articles_div')){
 
 subject = document.getElementById('lh_tools_related_articles_div').getAttribute('data-uriref');
 
-bar1 = document.getElementById('lh_tools_related_articles_div').getAttribute('data-lh_tools_url') + '?query=';
+bar1 = document.getElementById('lh_tools_related_articles_div').getAttribute('data-lh_tools_url') + 'api.php?query=';
 
 var sparqle_query = 'SELECT ?s ?thumbnailsize ?title ?abstract COUNT(?topic) AS ?topics WHERE {<$subject> sioc:topic ?topic . ?s sioc:topic ?topic . ?s dc:title ?title .  ?s dc:abstract ?abstract . OPTIONAL { ?s lh:post_thumbnail ?postthumbnail . ?postthumbnail foaf:thumbnail ?thumbnailsize .  ?thumbnailsize rdfs:type lh:thumbnail   } . FILTER (?s !=<$subject>) } GROUP BY ?s order by desc(?topics) LIMIT';
 
@@ -258,6 +247,7 @@ addit += '<img src=\"' + var1.results.bindings[i].thumbnailsize.value + '\"/>';
 } else {
 
 addit += '<img src=\"' + document.getElementById('lh_tools_related_articles_div').getAttribute('data-lh_tools_url') + 'images/question_mark_thumbnail-150x150.png\"/>';
+
 
 }
 addit += '<br/>' + var1.results.bindings[i].title.value + '</a>' + var1.results.bindings[i].abstract.value + '</li>';

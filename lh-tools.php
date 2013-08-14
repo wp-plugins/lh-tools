@@ -3,7 +3,7 @@
 Plugin Name: LH Tools
 Plugin URI: http://localhero.biz/plugins/lh-tools/
 Description: RDF Storage and related tools. Requires the <a href="https://github.com/semsol/arc2">ARC Toolkit</a>
-Version: 0.10
+Version: 0.11
 Author: Peter Shaw
 Author URI: http://shawfactor.com/
 
@@ -38,6 +38,9 @@ Author URI: http://shawfactor.com/
 
 = 0.10 =
 * Widget fixes and improved api
+
+= 0.11 =
+* Further improved api
 
 
 
@@ -591,6 +594,60 @@ add_action('wp', 'lh_tools_endpoint_activation');
 
 }
 
+
+function lh_tools_weblogUpdates_ping($args) {
+
+global $table_prefix;
+
+include_once(ABSPATH . 'wp-content/plugins/lh-tools/arc/ARC2.php');
+
+  $config = array(
+    /* db */
+    'db_host' => DB_HOST,
+    'db_name' => DB_NAME,
+    'db_user' => DB_USER,
+    'db_pwd' => DB_PASSWORD,
+    /* store */
+    'store_name' => $table_prefix . 'lh_tools_store',
+  'store_allow_extension_functions' => 1,
+    /* endpoint */
+    'endpoint_features' => rdf_tools_get_setting('endpoint_features'),
+    'endpoint_timeout' => rdf_tools_get_setting('endpoint_timeout'),
+    'endpoint_max_limit' => rdf_tools_get_setting('endpoint_max_limit'),
+    'endpoint_read_key' => rdf_tools_get_setting('endpoint_read_key'),
+    'endpoint_write_key' => rdf_tools_get_setting('endpoint_write_key'),
+  );
+
+$initialgraph = rdf_tools_get_setting('endpoint_src_file');
+
+//Check if the inital graph is already in the store
+
+$store = ARC2::getStore($config);
+
+$q = "SELECT * WHERE { GRAPH ?g { ?s ?p ?o . } } LIMIT 10";
+
+$feeds = $store->query($q);
+
+$foo = print_r($feeds, true);
+
+//mail("shawp4@anz.com", "post data", $_SERVER['REMOTE_ADDR']);
+
+
+
+$return['flerror'] = false;
+
+$return['message'] = "Thanks for pinging";
+
+return $return;
+
+}
+
+function lh_tools_new_xmlrpc_methods( $methods ) {
+    $methods['weblogUpdates.ping'] = 'lh_tools_weblogUpdates_ping';
+    return $methods;   
+}
+
+add_filter( 'xmlrpc_methods', 'lh_tools_new_xmlrpc_methods');
 
 
 ?>

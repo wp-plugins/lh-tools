@@ -61,3 +61,6 @@ Widget updates
 
 **0.1.0 July 31, 2013**  
 Widget fixes
+
+**0.1.1 August 13, 2013**  
+API fix

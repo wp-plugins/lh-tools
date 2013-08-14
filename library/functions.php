@@ -2,7 +2,7 @@
 
 function lh_tools_taxmapper_client($endpoint,$key,$query){
 
-echo $query."\n";
+echo "<br/><strong>".$query."</strong>\n";
 
 //set POST variables
 $fields = array(
@@ -38,13 +38,17 @@ $permalink = get_permalink($postid);
 
 $graph = $permalink."?feed=lhrdf";
 
+echo "<br/><strong>the graph is ".$graph."</strong>\n";
+
 $endpoint = plugins_url().'/lh-tools/';
 
 $key = get_option('rdf_tools_endpoint_write_key');
 
-echo $graph;
+echo "<br/><strong>the key is ".$key."</strong>\n";
 
-$hash = lh_tools_return_hash($insert);
+$hash = lh_tools_return_hash($graph);
+
+echo "<br/><strong>the hash is ".$hash."</strong>\n";
 
 //check for duplicate graphs
 
@@ -94,6 +98,14 @@ $foo = lh_tools_taxmapper_client($endpoint,$key,$q);
 echo $graph." loaded\n";
 
 }
+
+function lh_tools_loadqueu(){
+
+$query = "select ?o from <queu> where {?s <http://rdfs.org/ns/void#dataDump> ?o }";
+
+}
+
+
 
 function lh_tools_escapeJavaScriptText($string){
     return str_replace("\n", '\n', str_replace('"', '\"', addcslashes(str_replace("\r", '', (string)$string), "\0..\37'\\")));

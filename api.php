@@ -31,8 +31,20 @@ include_once(ABSPATH . 'wp-content/plugins/lh-tools/arc/ARC2.php');
 
 $store = ARC2::getStore($config);
 
+if (function_exists( 'lh_relationships_return_compliant_namespace' ) ){
 
-$store = ARC2::getStore($config);
+$namespaces = lh_relationships_return_compliant_namespace();
+
+$query = "";
+
+foreach ($namespaces as $namespace){
+
+$query .= "PREFIX ".$namespace->prefix.": <".$namespace->namespace.">\n";
+
+}
+
+} else {
+
 
 $query = "PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX sioc: <http://rdfs.org/sioc/ns#>
@@ -40,8 +52,11 @@ PREFIX lh: <http://localhero.biz/uri/localhero-namespace/>
 PREFIX rdfs: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX dbp: <http://dbpedia.org/ontology/>
 PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#> ";
 
+
+}
 
 $query .= str_replace("\\\"", "\"", $_GET["query"]); 
 
