@@ -3,7 +3,7 @@
 Plugin Name: LH Tools
 Plugin URI: http://localhero.biz/plugins/lh-tools/
 Description: RDF Storage and related tools. Requires the <a href="https://github.com/semsol/arc2">ARC Toolkit</a>
-Version: 0.11
+Version: 0.12
 Author: Peter Shaw
 Author URI: http://shawfactor.com/
 
@@ -42,7 +42,8 @@ Author URI: http://shawfactor.com/
 = 0.11 =
 * Further improved api
 
-
+= 0.12 =
+* Added url mapping to sparql endpoint
 
 
 License:
@@ -61,11 +62,11 @@ You should have received a copy of the GNU General Public License along with thi
 
 /* hooks */
 
-add_action('admin_menu', 'rdf_tools_handle_admin_request');
+add_action('admin_menu', 'lh_tools_handle_admin_request');
 //add_action('template_redirect', 'rdf_tools_handle_request');
 
-register_activation_hook(__FILE__, 'rdf_tools_activate');
-register_deactivation_hook(__FILE__, 'rdf_tools_deactivate');
+register_activation_hook(__FILE__, 'lh_tools_activate');
+register_deactivation_hook(__FILE__, 'lh_tools_deactivate');
 register_activation_hook(__FILE__, 'lh_tools_install_arc' );
 
 /* defines */
@@ -79,15 +80,15 @@ include_once('library/functions.php');
 
 /* init */
 
-function rdf_tools_activate() {
-  $flds = rdf_tools_get_option_list();
+function lh_tools_activate() {
+  $flds = lh_tools_get_option_list();
   foreach ($flds as $fld) {
     add_option('rdf_tools_' . $fld, '');
   }
 }
 
-function rdf_tools_deactivate() {
-  $flds = rdf_tools_get_option_list();
+function lh_tools_deactivate() {
+  $flds = lh_tools_get_option_list();
   foreach ($flds as $fld) {
     delete_option('rdf_tools_' . $fld);
   }
@@ -95,18 +96,18 @@ function rdf_tools_deactivate() {
 
 /* admin */
 
-function rdf_tools_handle_admin_request() {
-	add_options_page('LH Tools Setup', 'LH Tools', 10, 'rdf-tools.php', 'rdf_tools_handle_admin_options');
+function lh_tools_handle_admin_request() {
+	add_options_page('LH Tools Setup', 'LH Tools', 10, 'lh-tools.php', 'lh_tools_handle_admin_options');
 }
 
-function rdf_tools_handle_admin_options() {
+function lh_tools_handle_admin_options() {
   if (isset($_POST['rdf_tools_token']) && ($_POST['rdf_tools_token'] == rdf_tools_get_token())) {
     rdf_tools_handle_options_submit();
   }
-  echo rdf_tools_get_options_form();
+  echo lh_tools_get_options_form();
 }
 
-function rdf_tools_get_options_form() {
+function lh_tools_get_options_form() {
 
 
 if (file_exists(LH_TOOLS_PLUGIN_DIR . '/arc/ARC2.php') ) {
@@ -279,13 +280,13 @@ function rdf_tools_handle_options_submit() {
     $ep->drop();
   }
   /* endpoint */
-  $settings = rdf_tools_get_option_list();
+  $settings = lh_tools_get_option_list();
   foreach ($settings as $k) {
     update_option('rdf_tools_' . $k, $_POST[$k]);
   }
 }
 
-function rdf_tools_get_option_list() {
+function lh_tools_get_option_list() {
   return array(
     'endpoint_active',
     'endpoint_max_limit',
@@ -648,6 +649,30 @@ function lh_tools_new_xmlrpc_methods( $methods ) {
 }
 
 add_filter( 'xmlrpc_methods', 'lh_tools_new_xmlrpc_methods');
+
+function lh_tools_init_external_form_handler(){ 
+    global $wp_rewrite; 
+    $plugin_url = plugins_url( 'index.php', __FILE__ ); 
+    $plugin_url = substr( $plugin_url, strlen( home_url() ) + 1 ); 
+    // The pattern is prefixed with '^' 
+    // The substitution is prefixed with the "home root", at least a '/' 
+    // This is equivalent to appending it to `non_wp_rules` 
+    $wp_rewrite->add_external_rule( 'sparql-form$', $plugin_url ); 
+}
+
+add_action( 'init', 'lh_tools_init_external_form_handler' ); 
+
+function lh_tools_init_external_api_handler(){ 
+    global $wp_rewrite; 
+    $plugin_url = plugins_url( 'api.php', __FILE__ ); 
+    $plugin_url = substr( $plugin_url, strlen( home_url() ) + 1 ); 
+    // The pattern is prefixed with '^' 
+    // The substitution is prefixed with the "home root", at least a '/' 
+    // This is equivalent to appending it to `non_wp_rules` 
+    $wp_rewrite->add_external_rule( 'sparql-api$', $plugin_url ); 
+}
+
+add_action( 'init', 'lh_tools_init_external_api_handler' ); 
 
 
 ?>
