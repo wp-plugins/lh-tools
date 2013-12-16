@@ -3,6 +3,169 @@
 <title>LH Tools Mapper</title>
 </head>
 <body>
-Foobar
+<div id="map_canvas">
+</div>
+
+
+<script>
+
+function createMarker(pos, title, thelink) {
+
+var image = 'http://labs.google.com/ridefinder/images/mm_20_red.png';
+
+    var marker = new google.maps.Marker({       
+        position: pos, 
+      	map: map,  
+        title: title,
+icon: image
+     
+    }); 
+
+    google.maps.event.addListener(marker, 'click', function() { 
+          window.location = thelink;
+    }); 
+    return marker;  
+}
+
+
+function bounds_handler(var1) {
+
+for (var i = 0; i < var1.results.bindings.length; i++) {
+
+
+
+var myLatlng = new google.maps.LatLng(var1.results.bindings[i].lat.value, var1.results.bindings[i].lng.value);
+
+createMarker(myLatlng, var1.results.bindings[i].title.value, var1.results.bindings[i].s.value)
+
+
+
+}
+
+
+}
+
+
+function final_test(){
+
+var divArray = document.getElementById('map_canvas');
+
+divArray.style.width = '100%';
+divArray.style.height = '100%';
+
+
+var myLatlng = new google.maps.LatLng(expected.results.bindings[0].lat.value, expected.results.bindings[0].lng.value);
+
+        var myOptions = {
+          center: myLatlng,
+          zoom: 8,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+
+map = new google.maps.Map(document.getElementById("map_canvas"),
+            myOptions);
+
+start_marker = new google.maps.Marker({
+ position: myLatlng,
+title: 'Article Location',
+map: map
+});
+
+
+google.maps.event.addListener(map, "idle", function() {
+
+bar1 = api + '?query=';
+
+var sparqle_query = 'SELECT ?s ?title ?lat ?lng COUNT(?tag) AS ?tags WHERE {<$subject> sioc:topic ?tag . ?s sioc:topic ?tag . ?s sioc:topic ?o . ?s dc:title ?title . ?o rdf:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng . FILTER (?lat >= $sw_latitude) . FILTER (?lat <= $ne_latitude) . FILTER (?lng >= $sw_longitude) . FILTER (?lng <= $ne_longitude) . FILTER(str(?s)!="$subject") } GROUP BY ?s order by desc(?tags) LIMIT 10 OFFSET 0';
+
+
+var sparqle_query = sparqle_query.replace("$sw_latitude", map.getBounds().getSouthWest().lat());
+var sparqle_query = sparqle_query.replace("$ne_latitude", map.getBounds().getNorthEast().lat());
+var sparqle_query = sparqle_query.replace("$sw_longitude", map.getBounds().getSouthWest().lng());
+var sparqle_query = sparqle_query.replace("$ne_longitude", map.getBounds().getNorthEast().lng());
+var sparqle_query = sparqle_query.replace("$subject", subject);
+var sparqle_query = sparqle_query.replace("$subject", subject);
+
+
+
+var sparqle_query = encodeURIComponent(sparqle_query);
+
+
+bar2 = '&callback=bounds_handler';
+
+bar = bar1 + sparqle_query + bar2;
+
+loadjscssfile(bar, 'js');
+
+
+});
+
+
+
+
+}
+
+function loadjscssfile(filename, filetype){
+ if (filetype=="js"){ //if filename is a external JavaScript file
+  var fileref=document.createElement('script')
+  fileref.setAttribute("type","text/javascript")
+  fileref.setAttribute("src", filename)
+ }
+ else if (filetype=="css"){ //if filename is an external CSS file
+  var fileref=document.createElement("link")
+  fileref.setAttribute("rel", "stylesheet")
+  fileref.setAttribute("type", "text/css")
+  fileref.setAttribute("href", filename)
+fileref.setAttribute("media", "print")
+ }
+ if (typeof fileref!="undefined")
+  document.getElementsByTagName("head")[0].appendChild(fileref)
+}
+
+function json_handler(var1) {
+
+
+if (var1.results.bindings.length){
+
+expected = var1;
+
+loadjscssfile('http://maps.google.com/maps/api/js?sensor=true&callback=final_test', 'js');
+
+}
+
+}
+
+
+// Read a page's GET URL variables and return them as an associative array.
+function getUrlVars() {
+	var map = {};
+	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+		map[key] = value;
+	});
+	return map;
+}
+
+
+
+subject = decodeURIComponent(getUrlVars()["subject"]);
+
+api = decodeURIComponent(getUrlVars()["api"]);
+
+endpoint = api + '?callback=json_handler&query=';
+
+sparqle_query = 'SELECT * WHERE { <$subject_var> sioc:topic ?o . ?o rdf:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng }';
+
+sparqle_query = sparqle_query.replace("$subject_var", subject);
+
+sparqle_query = encodeURIComponent(sparqle_query);
+
+foo = endpoint + sparqle_query;
+
+
+loadjscssfile(foo, 'js');
+
+
+</script>
 </body>
 </html>

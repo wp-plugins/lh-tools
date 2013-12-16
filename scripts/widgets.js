@@ -21,6 +21,8 @@ function bounds_handler(var1) {
 
 for (var i = 0; i < var1.results.bindings.length; i++) {
 
+
+
 var myLatlng = new google.maps.LatLng(var1.results.bindings[i].lat.value, var1.results.bindings[i].lng.value);
 
 createMarker(myLatlng, var1.results.bindings[i].title.value, var1.results.bindings[i].s.value)
@@ -85,6 +87,7 @@ var txt = document.createTextNode("article location");
 otherspan.appendChild(artimg);
 otherspan.appendChild(txt);
 
+lhtoolsuri = document.getElementById('map_canvas').getAttribute("data-lh_tools_url");
 var artimg  = document.createElement('img');
 artimg.setAttribute('src', 'http://labs.google.com/ridefinder/images/mm_20_red.png');
 var txt = document.createTextNode("other articles");
@@ -92,7 +95,7 @@ otherspan.appendChild(artimg);
 otherspan.appendChild(txt);
 var txt = document.createTextNode("View larger Map");
 var anchor  = document.createElement('a');
-anchor.setAttribute("href",divArray.getAttribute("data-lh_tools_url") + 'scripts/map.html');
+anchor.setAttribute("href",divArray.getAttribute("data-lh_tools_url") + 'scripts/map.html?subject=' + encodeURIComponent(subject) + '&?api=' + encodeURIComponent(lhtoolsuri + 'api.php'));
 anchor.style.fontSize = '80%';
 var image  = document.createElement('image');
 image.setAttribute('src', document.getElementById("map_canvas").getAttribute("data-lh_tools_url") + 'images/magnify_icon.png');
@@ -138,7 +141,7 @@ endpoint = mapcanvasdiv.getAttribute("data-lh_tools_url");
 
 bar1 = endpoint + 'api.php?query=';
 
-var sparqle_query = 'SELECT ?s ?title ?lat ?lng COUNT(?tag) AS ?tags WHERE {<$subject> sioc:topic ?tag . ?s sioc:topic ?tag . ?s sioc:topic ?o . ?s dc:title ?title . ?o rdfs:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng . FILTER (?lat >= $sw_latitude) . FILTER (?lat <= $ne_latitude) . FILTER (?lng >= $sw_longitude) . FILTER (?lng <= $ne_longitude) . FILTER(str(?s)!="$subject") } GROUP BY ?s order by desc(?tags) LIMIT 10 OFFSET 0';
+var sparqle_query = 'SELECT ?s ?title ?lat ?lng COUNT(?tag) AS ?tags WHERE {<$subject> sioc:topic ?tag . ?s sioc:topic ?tag . ?s sioc:topic ?o . ?s dc:title ?title . ?o rdf:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng . FILTER (?lat >= $sw_latitude) . FILTER (?lat <= $ne_latitude) . FILTER (?lng >= $sw_longitude) . FILTER (?lng <= $ne_longitude) . FILTER(str(?s)!="$subject") } GROUP BY ?s order by desc(?tags) LIMIT 10 OFFSET 0';
 
 
 var sparqle_query = sparqle_query.replace("$sw_latitude", map.getBounds().getSouthWest().lat());
@@ -169,7 +172,7 @@ subject = document.getElementById('map_canvas').getAttribute("data-uriref");
 
 endpoint = document.getElementById('map_canvas').getAttribute("data-lh_tools_url") + 'api.php?callback=json_handler&query=';
 
-sparqle_query = 'SELECT * WHERE { <$subject_var> sioc:topic ?o . ?o rdfs:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng }';
+sparqle_query = 'SELECT * WHERE { <$subject_var> sioc:topic ?o . ?o rdf:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng }';
 
 sparqle_query = sparqle_query.replace("$subject_var", subject);
 
@@ -177,7 +180,7 @@ sparqle_query = encodeURIComponent(sparqle_query);
 
 foo = endpoint + sparqle_query;
 
-
+//document.getElementById('debugqueries').innerHTML = foo;
 
 loadjscssfile(foo, 'js');
 
@@ -193,15 +196,15 @@ subject = document.getElementById('lh_tools_related_articles_div').getAttribute(
 
 bar1 = document.getElementById('lh_tools_related_articles_div').getAttribute('data-lh_tools_url') + 'api.php?query=';
 
-var sparqle_query = 'SELECT ?s ?thumbnailsize ?title ?abstract COUNT(?topic) AS ?topics WHERE {<$subject> sioc:topic ?topic . ?s sioc:topic ?topic . ?s dc:title ?title .  ?s dc:abstract ?abstract . OPTIONAL { ?s lh:post_thumbnail ?postthumbnail . ?postthumbnail foaf:thumbnail ?thumbnailsize .  ?thumbnailsize rdfs:type lh:thumbnail   } . FILTER (?s !=<$subject>) } GROUP BY ?s order by desc(?topics) LIMIT';
+var sparqle_query = 'SELECT ?s ?thumbnailsize ?title ?abstract COUNT(?topic) AS ?topics WHERE {<$subject> sioc:topic ?topic . ?s sioc:topic ?topic . ?s dc:title ?title .  ?s dc:abstract ?abstract . ?s lh:post_thumbnail ?postthumbnail . OPTIONAL {  ?postthumbnail foaf:thumbnail ?thumbnailsize .  ?thumbnailsize rdfs:type lh:thumbnail  } . FILTER (?s !=<$subject>) } GROUP BY ?s order by desc(?topics) LIMIT';
 
 if (screen.width > 460){
 
-sparqle_query += ' 3 OFFSET 0';
+sparqle_query += ' 3';
 
 } else {
 
-sparqle_query += ' 2 OFFSET 0';
+sparqle_query += ' 2';
 
 }
 
@@ -214,6 +217,10 @@ var sparqle_query = encodeURIComponent(sparqle_query);
 bar2 = '&output=json&callback=lh_tools_related_articles_json_handler';
 
 bar = bar1 + sparqle_query + bar2;
+
+//document.getElementById('debugqueries').innerHTML = bar;
+
+
 
 
 loadjscssfile(bar, 'js');

@@ -67,3 +67,6 @@ API fix
 
 **0.1.2 December 12, 2013**  
 Added short url to sparql endpoint
+
+**0.1.3 December 12, 2013**  
+Improved map widget
