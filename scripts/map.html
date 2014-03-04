@@ -92,7 +92,7 @@ var sparqle_query = sparqle_query.replace("$subject", subject);
 var sparqle_query = encodeURIComponent(sparqle_query);
 
 
-bar2 = '&callback=bounds_handler';
+bar2 = '&prefix=yes&callback=bounds_handler&output=json';
 
 bar = bar1 + sparqle_query + bar2;
 
@@ -152,7 +152,7 @@ subject = decodeURIComponent(getUrlVars()["subject"]);
 
 api = decodeURIComponent(getUrlVars()["api"]);
 
-endpoint = api + '?callback=json_handler&query=';
+endpoint = api + '?callback=json_handler&output=json&prefix=yes&query=';
 
 sparqle_query = 'SELECT * WHERE { <$subject_var> sioc:topic ?o . ?o rdf:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng }';
 

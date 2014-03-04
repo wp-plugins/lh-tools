@@ -1,10 +1,83 @@
 <?php
 
+function lh_tools_callback_outputrss($input){
+
+header("HTTP/1.1 200 OK");
+
+header('Content-Type: text/xml');
+
+
+echo '<?xml version="1.0" encoding="UTF-8" ?>';
+
+
+
+?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+<title>LocalHero</title>
+<link>http://localhero.biz</link>
+<description><?php
+print_r($input[result][rows]);
+
+$rows = $input[result][rows];
+
+?>
+</description>
+<lastBuildDate>Tue, 19 Mar 2013 13:04:52 +0000</lastBuildDate>
+<language>en-US</language>
+<sy:updatePeriod>hourly</sy:updatePeriod>
+<sy:updateFrequency>1</sy:updateFrequency>
+<generator>http://wordpress.org/?v=3.5.1</generator>
+
+<?php  
+
+foreach($rows as $row){ 
+
+?>
+<item>
+<title><?php echo $row[title]; ?></title>
+<link><?php echo $row[link]; ?></link>
+<pubDate>Tue, 19 Mar 2013 11:23:19 +0000</pubDate>
+<dc:creator>root</dc:creator>
+<category><![CDATA[Uncategorized]]></category>
+<category><![CDATA[IFTTT]]></category>
+<guid isPermaLink="false">http://localhero.biz/?p=test</guid>
+<description><![CDATA[
+
+foobar
+
+]]></description>
+
+</item>
+
+<?php } ?> 
+
+</channel>
+</rss>
+
+
+
+<?php
+
+
+}
+
+
 
 define('WP_USE_THEMES', false);
 
 /** Loads the WordPress Environment and Template */
 include("../../../wp-blog-header.php");
+
+
 
 if(rdf_tools_get_setting('endpoint_active')) {
 
@@ -74,32 +147,14 @@ PREFIX void: <http://rdfs.org/ns/void#> ";
 }
 
 $query .= str_replace("\\\"", "\"", $_GET["query"]); 
+$foo = str_replace("\\\"", "\"", $_GET['callback']);
 
-//echo "query 1 is ".$query;
 
 $foobar = $store->query($query);
 
-$return = lh_tools_getSPARQLJSONSelectResultDoc($foobar);
+$function = "lh_tools_callback_".$foo;
 
-
-header("HTTP/1.1 200 Ok");
-
-if ($_GET["callback"]){
-
-header('Content-Type: application/javascript; charset=utf-8');
-
-echo $_GET["callback"]."(".$return.");";
-
-} else {
-
-header('Content-Type: application/sparql-results+json; charset=utf-8');
-
-echo $return;
-
-}
-
-
-
+echo $function($foobar);
 }
 
 ?>

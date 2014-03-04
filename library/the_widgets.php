@@ -17,7 +17,7 @@ if (is_singular()){
 wp_enqueue_script( 'lh_tools_widgets',   plugins_url().'/lh-tools/scripts/widgets.js', false, false, true );
 
 
-return "<div id=\"map_canvas\" data-uriref=\"".$post->guid."\" data-lh_tools_url=\"".plugins_url()."/lh-tools/\"></div>";
+return "<div id=\"map_canvas\" data-uriref=\"".$post->guid."\" data-lh_tools_endpoint=\"".site_url('/sparql-form')."\" data-lh_tools_dir=\"".plugins_url()."/lh-tools/\"></div>";
 
 }
 
@@ -58,7 +58,7 @@ extract( shortcode_atts( array( 'foo' => 'something', 'bar' => 'something else',
 
 wp_enqueue_script( 'lh_tools_widgets',   plugins_url().'/lh-tools/scripts/widgets.js', false, false, true );
 
-return "<div id=\"lh_tools_related_articles_div\" data-uriref=\"".$post->guid."\" data-lh_tools_url=\"".plugins_url()."/lh-tools/api.php\"></div>";
+return "<div id=\"lh_tools_related_articles_div\" data-uriref=\"".$post->guid."\" data-lh_tools_endpoint=\"".site_url('/sparql-form')."\" data-lh_tools_url=\"".plugins_url()."/lh-tools/\"></div>";
 
 }
 

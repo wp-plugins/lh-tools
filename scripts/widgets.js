@@ -87,7 +87,7 @@ var txt = document.createTextNode("article location");
 otherspan.appendChild(artimg);
 otherspan.appendChild(txt);
 
-lhtoolsuri = document.getElementById('map_canvas').getAttribute("data-lh_tools_url");
+lhtoolsuri = document.getElementById('map_canvas').getAttribute("data-lh_tools_endpoint");
 var artimg  = document.createElement('img');
 artimg.setAttribute('src', 'http://labs.google.com/ridefinder/images/mm_20_red.png');
 var txt = document.createTextNode("other articles");
@@ -95,10 +95,10 @@ otherspan.appendChild(artimg);
 otherspan.appendChild(txt);
 var txt = document.createTextNode("View larger Map");
 var anchor  = document.createElement('a');
-anchor.setAttribute("href",divArray.getAttribute("data-lh_tools_url") + 'scripts/map.html?subject=' + encodeURIComponent(subject) + '&?api=' + encodeURIComponent(lhtoolsuri + 'api.php'));
+anchor.setAttribute("href",divArray.getAttribute("data-lh_tools_dir") + 'scripts/map.html?subject=' + encodeURIComponent(subject) + '&?api=' + encodeURIComponent(lhtoolsuri));
 anchor.style.fontSize = '80%';
 var image  = document.createElement('image');
-image.setAttribute('src', document.getElementById("map_canvas").getAttribute("data-lh_tools_url") + 'images/magnify_icon.png');
+image.setAttribute('src', document.getElementById("map_canvas").getAttribute("data-lh_tools_dir") + 'images/magnify_icon.png');
 anchor.appendChild(image);
 anchor.appendChild(txt);
 otherspan.appendChild(anchor);
@@ -139,7 +139,7 @@ mapcanvasdiv = document.getElementById("map_canvas");
 
 endpoint = mapcanvasdiv.getAttribute("data-lh_tools_url");
 
-bar1 = endpoint + 'api.php?query=';
+bar1 = endpoint + '?query=';
 
 var sparqle_query = 'SELECT ?s ?title ?lat ?lng COUNT(?tag) AS ?tags WHERE {<$subject> sioc:topic ?tag . ?s sioc:topic ?tag . ?s sioc:topic ?o . ?s dc:title ?title . ?o rdf:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng . FILTER (?lat >= $sw_latitude) . FILTER (?lat <= $ne_latitude) . FILTER (?lng >= $sw_longitude) . FILTER (?lng <= $ne_longitude) . FILTER(str(?s)!="$subject") } GROUP BY ?s order by desc(?tags) LIMIT 10 OFFSET 0';
 
@@ -153,7 +153,7 @@ var sparqle_query = sparqle_query.replace("$subject", subject);
 
 var sparqle_query = encodeURIComponent(sparqle_query);
 
-bar2 = '&callback=bounds_handler';
+bar2 = '&output=json&prefix=yes&callback=bounds_handler';
 
 bar = bar1 + sparqle_query + bar2;
 
@@ -170,7 +170,7 @@ function lh_tools_article_location(){
 
 subject = document.getElementById('map_canvas').getAttribute("data-uriref");
 
-endpoint = document.getElementById('map_canvas').getAttribute("data-lh_tools_url") + 'api.php?callback=json_handler&query=';
+endpoint = document.getElementById('map_canvas').getAttribute("data-lh_tools_endpoint") + '?callback=json_handler&prefix=yes&output=json&query=';
 
 sparqle_query = 'SELECT * WHERE { <$subject_var> sioc:topic ?o . ?o rdf:type dbp:place . ?o wgs84:lat ?lat . ?o wgs84:long ?lng }';
 
@@ -194,7 +194,7 @@ if (document.getElementById('lh_tools_related_articles_div')){
 
 subject = document.getElementById('lh_tools_related_articles_div').getAttribute('data-uriref');
 
-bar1 = document.getElementById('lh_tools_related_articles_div').getAttribute('data-lh_tools_url') + 'api.php?query=';
+bar1 = document.getElementById('lh_tools_related_articles_div').getAttribute('data-lh_tools_endpoint') + '?query=';
 
 var sparqle_query = 'SELECT ?s ?thumbnailsize ?title ?abstract COUNT(?topic) AS ?topics WHERE {<$subject> sioc:topic ?topic . ?s sioc:topic ?topic . ?s dc:title ?title .  ?s dc:abstract ?abstract . ?s lh:post_thumbnail ?postthumbnail . OPTIONAL {  ?postthumbnail foaf:thumbnail ?thumbnailsize .  ?thumbnailsize rdfs:type lh:thumbnail  } . FILTER (?s !=<$subject>) } GROUP BY ?s order by desc(?topics) LIMIT';
 
@@ -214,7 +214,7 @@ var sparqle_query = sparqle_query.replace("$subject", subject);
 
 var sparqle_query = encodeURIComponent(sparqle_query);
 
-bar2 = '&output=json&callback=lh_tools_related_articles_json_handler';
+bar2 = '&output=json&prefix=yes&callback=lh_tools_related_articles_json_handler';
 
 bar = bar1 + sparqle_query + bar2;
 
@@ -232,7 +232,7 @@ loadjscssfile(bar, 'js');
 function lh_tools_related_articles_json_handler(var1) {
 
 
-addit = '<h3>Semantically Related Posts</h3><ul class=\"lhtoolsrelatedlist\" style=\"list-style-type:none;margin:0;padding:0;min-height:250px;\">';
+addit = '<h3>Semantically Related Articles</h3><ul class=\"lhtoolsrelatedlist\" style=\"list-style-type:none;margin:0;padding:0;min-height:250px;\">';
 
 for (var i = 0; i < var1.results.bindings.length; i++) {
 
@@ -253,7 +253,7 @@ if (var1.results.bindings[i].thumbnailsize!== undefined){
 addit += '<img src=\"' + var1.results.bindings[i].thumbnailsize.value + '\"/>';
 } else {
 
-addit += '<img src=\"' + document.getElementById('lh_tools_related_articles_div').getAttribute('data-lh_tools_url') + 'images/question_mark_thumbnail-150x150.png\"/>';
+addit += '<img src=\"' + document.getElementById('lh_tools_related_articles_div').getAttribute('data-lh_tools_dir') + 'images/question_mark_thumbnail-150x150.png\"/>';
 
 
 }
