@@ -3,7 +3,7 @@ Contributors: shawfactor
 Donate link: http://localhero.biz/plugins/lh-tools/
 Tags: rdf, localhero, sparql, skos, json, api, endpoint
 Requires at least: 3.0
-Tested up to: 3.8
+Tested up to: 4.1
 Stable tag: trunk
 
 LH Tools is a wordpress plugin that enables a sparql endpoint for for WordPress sites. This will enable semantic querying of WordPress data.
