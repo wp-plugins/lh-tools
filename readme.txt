@@ -1,6 +1,6 @@
 === LH Tools ===
 Contributors: shawfactor
-Donate link: http://localhero.biz/plugins/lh-tools/
+Donate link: http://lhero.org/plugins/lh-tools/
 Tags: rdf, localhero, sparql, skos, json, api, endpoint
 Requires at least: 3.0
 Tested up to: 4.1
